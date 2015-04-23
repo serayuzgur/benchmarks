@@ -5,6 +5,7 @@ import org.abstractmeta.reflectify.Reflectify;
 import org.abstractmeta.reflectify.ReflectifyRegistry;
 import org.abstractmeta.reflectify.runtime.ReflectifyRuntimeRegistry;
 
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -24,6 +25,8 @@ public class DirectVSReflection {
         method.setAccessible(true);
         ReflectifyRegistry registry = new ReflectifyRuntimeRegistry();
         Reflectify<Executable> reflectify = registry.get(Executable.class);
+        Reflectify.Provider provider = reflectify.getProvider();
+
 
         Integer repeat = 10000;
 
@@ -32,18 +35,18 @@ public class DirectVSReflection {
         //Warm up
         System.out.println("---Warming up---");
         for (int i = 0; i < 3; i++) {
-            test(aClass, method, repeat, invoker);
+            test(aClass, method, repeat, invoker,provider);
         }
 
         System.out.println("---Starting  up---");
         for (int i = 1; i < 11; i++) {
             System.out.println("----Pass" + i + "---");
-            test(aClass, method, repeat, invoker);
+            test(aClass, method, repeat, invoker,provider);
         }
 
     }
 
-    private static void test(Class aClass, Method method, int repeat, MethodInvoker<Executable, Integer> invoker) throws IllegalAccessException, InvocationTargetException, InstantiationException {
+    private static void test(Class aClass, Method method, int repeat, MethodInvoker<Executable, Integer> invoker,Reflectify.Provider provider) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         long start = System.nanoTime();
         Integer result = 0;
         for (int i = 0; i < repeat; i++) {
@@ -60,7 +63,7 @@ public class DirectVSReflection {
         invoker.getParameterSetter(0).set(repeat);
         start = System.nanoTime();
         for (int i = 0; i < repeat; i++) {
-            result  = (Integer) invoker.invoke((Executable) aClass.newInstance());
+            result  = (Integer) invoker.invoke((Executable) provider.get());
         }
         System.out.println(result + " Reflectify " + (System.nanoTime() - start) / 1000);
 
