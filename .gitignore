@@ -1,0 +1,28 @@
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+!ojdbc6.jar
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Intellij
+.idea/
+*.iml
+*.iws
+
+# Mac
+.DS_Store
+
+# Maven
+log/
+target/
+
+# netbeans
+nbactions.xml
+
